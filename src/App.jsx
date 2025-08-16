@@ -321,7 +321,7 @@ const Dashboard = ({ onSelectCustomerSupplier, onAddCustomer }) => {
     setLoadingCustomers(true);
     // Query only for 'customer' type contacts
     const q = query(
-      collection(db, `artifacts/${__app_id}/users/${userId}/customers_suppliers`),
+      collection(db, `artifacts/${appId}/users/${userId}/customers_suppliers`),
       where("type", "==", "customer") // Filter to only show customers
     );
 
@@ -436,7 +436,7 @@ const CustomerDetail = ({ customerSupplier, onBack, onAddTransaction, onEditTran
 
     setLoadingTransactions(true);
     const q = query(
-      collection(db, `artifacts/${__app_id}/users/${userId}/transactions`),
+      collection(db, `artifacts/${appId}/users/${userId}/transactions`),
       where("customerSupplierId", "==", customerSupplier.id)
     );
 
@@ -466,7 +466,7 @@ const CustomerDetail = ({ customerSupplier, onBack, onAddTransaction, onEditTran
       // Optionally update the customer/supplier document's balance field in Firestore
       // This is good for quick lookups on the dashboard, but the source of truth is the transactions.
       try {
-        const csRef = doc(db, `artifacts/${__app_id}/users/${userId}/customers_suppliers`, customerSupplier.id);
+        const csRef = doc(db, `artifacts/${appId}/users/${userId}/customers_suppliers`, customerSupplier.id);
         await updateDoc(csRef, { balance: currentBalance });
       } catch (error) {
         console.error("Error updating customer/supplier balance:", error);
@@ -490,7 +490,7 @@ const CustomerDetail = ({ customerSupplier, onBack, onAddTransaction, onEditTran
       async () => {
         try {
           // No need to manually adjust balance here; the onSnapshot listener will re-calculate
-          await deleteDoc(doc(db, `artifacts/${__app_id}/users/${userId}/transactions`, transactionId));
+          await deleteDoc(doc(db, `artifacts/${appId}/users/${userId}/transactions`, transactionId));
           showMessageBox("Transaction deleted successfully!", "success");
         } catch (error) {
           console.error("Error deleting transaction:", error);
@@ -721,7 +721,7 @@ const AddCustomer = ({ onSave, onCancel }) => {
     setLoading(true);
     try {
       // Always add as 'customer'
-      await addDoc(collection(db, `artifacts/${__app_id}/users/${userId}/customers_suppliers`), {
+      await addDoc(collection(db, `artifacts/${appId}/users/${userId}/customers_suppliers`), {
         name: name.trim(),
         mobile: mobile.trim(),
         address: address.trim(),
@@ -901,11 +901,11 @@ const TransactionForm = ({ customerSupplierId, customerSupplierName, initialTran
 
       if (isEditing) {
         // Update existing transaction
-        await updateDoc(doc(db, `artifacts/${__app_id}/users/${userId}/transactions`, initialTransaction.id), transactionData);
+        await updateDoc(doc(db, `artifacts/${appId}/users/${userId}/transactions`, initialTransaction.id), transactionData);
         showMessageBox("Transaction updated successfully!", "success");
       } else {
         // Add new transaction
-        await addDoc(collection(db, `artifacts/${__app_id}/users/${userId}/transactions`), {
+        await addDoc(collection(db, `artifacts/${appId}/users/${userId}/transactions`), {
           ...transactionData,
           createdAt: new Date(), // createdAt only for new transactions
         });
