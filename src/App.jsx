@@ -132,9 +132,8 @@ function App() {
   useEffect(() => {
     const initializeFirebase = async () => {
       try {
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
+        const appId = import.meta.env.VITE_APP_ID || 'default-app-id';
+        const firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG || '{}');
         // Ensure firebaseConfig is not empty before initializing
         if (Object.keys(firebaseConfig).length === 0) {
             console.error("Firebase config is missing. Cannot initialize Firebase.");
